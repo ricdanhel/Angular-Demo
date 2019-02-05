@@ -1,3 +1,39 @@
-<p>
-  country works!
-</p>
+<h1>Search Country</h1>
+<div>
+  <input text="text" #keyword class="form-control-lg" placeholder="country name...">
+  <button class="btn btn-primary" (click)="searchCountry(keyword.value)">Search country</button>
+</div>
+<br>
+<div *ngIf="searchDone">
+  <table class="table table-striped">
+    <tr>
+      <td>Name</td>
+      <td>Capital</td>
+      <td>Flag</td>
+    </tr>
+    <tr>
+      <td>{{countryName}}</td>
+      <td>{{countryCapital}}</td>
+      <td>
+        <img src="{{countryFlag}}" width="100">
+      </td>
+    </tr>
+  </table>
+</div>
+<div *ngIf="countries$">
+  <h1>All countries</h1>
+  <table class="table table-striped">
+    <tr>
+      <td>Name</td>
+      <td>Capital</td>
+      <td>Flag</td>
+    </tr>
+    <tr *ngFor="let country of countries$ | async">
+      <td>{{ country.name }}</td>
+      <td>{{ country.capital }}</td>
+      <td>
+        <img src="{{ country.flag }}" width="100">
+      </td>
+    </tr>
+  </table>
+</div>

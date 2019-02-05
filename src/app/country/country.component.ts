@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { CountryService } from '../shared/services/country.service';
 import { Observable, Subscription } from 'rxjs';
+import { Country } from '../shared/models/country';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -10,17 +11,49 @@ import { map } from 'rxjs/operators';
 })
 export class CountryComponent implements OnInit {
 
+  public country$: Observable<Country>;
   public countrySub: Subscription;
-  public country$: Observable<Object[]>
 
-  constructor(private http: HttpClient) { }
+  public countries$: Observable<Country[]>;
+
+  private countryName: string;
+  private countryCapital: string;
+  private countryFlag: string;
+
+  private searchedCountry: Country;
+
+  private searchDone: boolean;
+
+  private naam: string;
+
+  constructor(private countryService: CountryService) { }
 
   ngOnInit() {
-    console.log(this.getCountry());
+    this.getCountries();
   }
 
-  getCountry() : Observable<Object[]> {
-    return this.http.get<Object[]>("localhost:8080/country/netherlands");
+  // Optie 1
+  searchCountry(keyword: string) {
+    this.country$ = this.countryService.searchCountry(keyword).pipe(map(result => result[0]));
+    this.countrySub = this.country$.subscribe(res => { this.countryName = res.name, this.countryCapital = res.capital, this.countryFlag = res.flag });
+    this.searchDone = true;
+  }
+
+  // Optie 2
+  // searchCountry(keyword: string) {
+  //   this.country$ = this.countryService.searchCountry(keyword);
+  //   this.countrySub = this.country$.subscribe((result) => { this.searchedCountry = result });
+  //   this.searchDone = true;
+  // }
+
+  //Optie 3
+  // searchCountry(keyword: string) {
+  //   this.countryService.searchCountry(keyword).subscribe((foundCountry) => { this.searchedCountry = foundCountry });
+  //   this.searchDone = true;
+  // }
+
+  getCountries() {
+    this.countries$ = this.countryService.getCountries();
   }
 
 }
